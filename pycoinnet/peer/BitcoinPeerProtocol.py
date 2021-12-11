@@ -39,6 +39,7 @@ class BitcoinPeerProtocol(asyncio.Protocol):
             while True:
                 try:
                     message_name, data = yield from self._parse_next_message()
+                    logging.debug("received message %s from %s: %s", message_name, self, data)
                 except EOFError:
                     logging.debug("end of stream %s", self)
                     message_name, data = None, None
@@ -89,7 +90,7 @@ class BitcoinPeerProtocol(asyncio.Protocol):
         packet = b"".join([
             self.magic_header, message_type_padded, message_size, message_checksum, message_data
         ])
-        logging.debug("sending message %s [%d bytes] to %s", message_type.decode("utf8"), len(packet), self)
+        logging.debug("sending message %s [%d bytes] to %s: %s", message_type.decode("utf8"), len(packet), self, kwargs)
         self.bytes_writ += len(packet)
         self.transport.write(packet)
 

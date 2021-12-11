@@ -81,9 +81,9 @@ def initial_handshake(peer, version_parameters):
     # do handshake
 
     next_message = peer.new_get_next_message_f()
+    message_name, version_data = yield from next_message()
     peer.send_msg("version", **version_parameters)
 
-    message_name, version_data = yield from next_message()
     if message_name != 'version':
         raise BitcoinProtocolError("missing version")
     peer.send_msg("verack")
